@@ -207,6 +207,56 @@ namespace ORPZ_lab1
             {
                 Console.WriteLine(result.Aircraft);
             }
+            
+            Console.WriteLine("\n\n\n\n\n");
+            Console.WriteLine("Query 12");
+            Console.WriteLine("Get number of helicopters for each airline");
+            var query12 = from a in airlines
+                join h in helicopters on a.Id equals h.AirlineId into temp
+                select new { Airline = a.Name, NumOfHelis = temp.Count() };
+            Console.WriteLine("Result: ");
+            foreach (var result in query12)
+            {
+                Console.WriteLine(result.Airline + " - " + result.NumOfHelis);
+            }
+            
+            Console.WriteLine("\n\n\n\n\n");
+            Console.WriteLine("Query 13");
+            Console.WriteLine("Get all helicopters, except first, for each airline");
+            var query13 = helicopters.GroupBy(h => h.AirlineId)
+                .Select(g => new
+                {
+                    Airline = airlines.FirstOrDefault(a => g.Key == a.Id),
+                    Helicopters = g.Skip(1)
+                });
+            Console.WriteLine("Result: ");
+            foreach (var result in query13)
+            {
+                Console.WriteLine(result.Airline);
+                foreach (var heli in result.Helicopters)
+                {
+                    Console.WriteLine(heli.Type);
+                }
+            }
+            
+            Console.WriteLine("\n\n\n\n\n");
+            Console.WriteLine("Query 14");
+            Console.WriteLine("Get count of planes, grouped by maximum flight range");
+            var query14 = from p in planes
+                group p by p.MaximumFlightRange
+                into g
+                select new { MaxFlightRange = g.Key, PlanesCount = g.Count() };
+            Console.WriteLine("Result: ");
+            foreach (var result in query14)
+            {
+                Console.WriteLine("Flight range - " + result.MaxFlightRange + ", planes count - " + result.PlanesCount);
+            }
+            
+            Console.WriteLine("\n\n\n\n\n");
+            Console.WriteLine("Query 15");
+            Console.WriteLine("Get total load capacity of helicopters");
+            var query15 = helicopters.Sum(h => h.LoadCapacity);
+            Console.WriteLine("Result: " + query15);
         }
     }
 }
