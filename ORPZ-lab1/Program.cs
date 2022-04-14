@@ -65,41 +65,52 @@ namespace ORPZ_lab1
             
             Console.WriteLine("Query 1");
             Console.WriteLine("Show information about airlines");
+            
             var query1 = from a in airlines
                 select a;
+            
             Console.WriteLine("Result: ");
             foreach (var result in query1)
             {
-                Console.WriteLine(result.Name + ", " + result.OfficeLocation + ", " + result.DateOfCreation);
+                Console.WriteLine(result.Name + ", location - " + result.OfficeLocation + ", date of creation - " + result.DateOfCreation);
             }
 
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 2");
             Console.WriteLine("Select unique types of planes");
+            
             var query2 = planes.Select(p => p.Type).Distinct();
+            
             Console.WriteLine("Result: ");
             foreach (var result in query2)
             {
                 Console.WriteLine(result);
             }
 
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 3");
             Console.WriteLine("Select planes with wingspan > 62, sort by wingspan and if equal, sort by type");
+            
             var query3 = from p in planes 
                 where p.Wingspan > 62
                 orderby p.Wingspan, p.Type
                 select p;
+            
             Console.WriteLine("Result: ");
             foreach (var result in query3)
             {
                 Console.WriteLine(result.Type + ", wingspan - " + result.Wingspan);
             }
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 4");
             Console.WriteLine("Show information about helicopters, sorted by maximum height in descending order");
+            
             var query4 = helicopters.Select(h => h).OrderByDescending(h => h.MaximumHeight);
+            
             Console.WriteLine("Result: ");
             foreach (var result in query4)
             {
@@ -109,11 +120,14 @@ namespace ORPZ_lab1
                                   + ", load capacity - " + result.LoadCapacity);
             }
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 5");
             Console.WriteLine("Group planes by airline");
+            
             var query5 = from p in planes
                 group p by p.AirlineId;
+            
             Console.WriteLine("Result: ");
             foreach (var result in query5)
             {
@@ -127,10 +141,13 @@ namespace ORPZ_lab1
                 Console.WriteLine();
             }
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 6");
             Console.WriteLine("Group helicopters by airline, sorted by airline ID in descending order");
+            
             var query6 = helicopters.GroupBy(h => h.AirlineId).OrderByDescending(g => g.Key);
+            
             Console.WriteLine("Result: ");
             foreach (var result in query6)
             {
@@ -144,54 +161,68 @@ namespace ORPZ_lab1
                 Console.WriteLine();
             }
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 7");
             Console.WriteLine("Get total load capacity of planes that belongs to each airline, sorted in ascending order");
+            
             var query7 = from p in planes
                 group p by p.AirlineId into g
                 select new { 
                     Airline = airlines.Where(a => a.Id == g.Key).Select(a => a.Name).FirstOrDefault(),
                     TotalCapacity = g.Sum(p => p.LoadCapacity) 
                 };
+            
             Console.WriteLine("Result: ");
             foreach (var result in query7)
             {
                 Console.WriteLine("Airline - " + result.Airline + ", total load capacity - " + result.TotalCapacity);
             }
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 8");
             Console.WriteLine("Get a type of plane and name of airline it belongs to");
+            
             var query8 = planes.Join(airlines,
                 p => p.AirlineId,
                 a => a.Id,
                 (p, a) => new { Airline = a.Name, Type = p.Type });
+            
             Console.WriteLine("Result: ");
             foreach (var result in query8)
             {
                 Console.WriteLine("Type - " + result.Type + ", airline - " + result.Airline);
             }
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 9");
             Console.WriteLine("Get total count of planes");
+            
             var query9 = planes.Count();
+            
             Console.WriteLine("Result: " + query9);
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 10");
             Console.WriteLine("Get planes with load capacity > 37000, except planes with wingspan > 70");
+            
             var query10 = planes.Where(p => p.LoadCapacity > 37000)
                 .Except(planes.Where(p2 => p2.Wingspan > 70));
+            
             Console.WriteLine("Result: ");
             foreach (var result in query10)
             {
                 Console.WriteLine(result.Type + ", wingspan - " + result.Wingspan + ", load capacity - " + result.LoadCapacity);
             }
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 11");
             Console.WriteLine("Get types of all aircrafts that belongs to \"Emirates\"");
+            
             var query11 = planes.Join(airlines,
                     p => p.AirlineId,
                     a => a.Id,
@@ -202,33 +233,40 @@ namespace ORPZ_lab1
                     a => a.Id,
                     (h, a) => new { Aircraft = h.Type, Airline = a.Name })
                     .Where(t1 => t1.Airline == "Emirates"));
+            
             Console.WriteLine("Result: ");
             foreach (var result in query11)
             {
                 Console.WriteLine(result.Aircraft);
             }
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 12");
             Console.WriteLine("Get number of helicopters for each airline");
+            
             var query12 = from a in airlines
                 join h in helicopters on a.Id equals h.AirlineId into temp
                 select new { Airline = a.Name, NumOfHelis = temp.Count() };
+            
             Console.WriteLine("Result: ");
             foreach (var result in query12)
             {
                 Console.WriteLine(result.Airline + " - " + result.NumOfHelis);
             }
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 13");
             Console.WriteLine("Get all helicopters, except first, for each airline");
+            
             var query13 = helicopters.GroupBy(h => h.AirlineId)
                 .Select(g => new
                 {
                     Airline = airlines.FirstOrDefault(a => g.Key == a.Id),
                     Helicopters = g.Skip(1)
                 });
+            
             Console.WriteLine("Result: ");
             foreach (var result in query13)
             {
@@ -239,23 +277,29 @@ namespace ORPZ_lab1
                 }
             }
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 14");
             Console.WriteLine("Get count of planes, grouped by maximum flight range");
+            
             var query14 = from p in planes
                 group p by p.MaximumFlightRange
                 into g
                 select new { MaxFlightRange = g.Key, PlanesCount = g.Count() };
+            
             Console.WriteLine("Result: ");
             foreach (var result in query14)
             {
                 Console.WriteLine("Flight range - " + result.MaxFlightRange + ", planes count - " + result.PlanesCount);
             }
             
-            Console.WriteLine("\n\n\n\n\n");
+            
+            Console.WriteLine("\n\n");
             Console.WriteLine("Query 15");
             Console.WriteLine("Get total load capacity of helicopters");
+            
             var query15 = helicopters.Sum(h => h.LoadCapacity);
+            
             Console.WriteLine("Result: " + query15);
         }
     }
